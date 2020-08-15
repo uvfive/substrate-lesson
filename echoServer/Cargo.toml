@@ -1,5 +1,5 @@
 [package]
-name = "tcpserver"
+name = "echo_server"
 version = "0.1.0"
 authors = ["uudsmart <395326436@qq.com>"]
 edition = "2018"
