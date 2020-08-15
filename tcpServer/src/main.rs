@@ -12,6 +12,7 @@ use tcp_server::TcpServer;
 fn main() -> std::io::Result<()> {
 
     let opt = Opt::parse_args();
+    println!("{}", opt);
 
     // 启动端口监听
     let mut server = TcpServer::new();
