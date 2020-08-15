@@ -39,7 +39,7 @@ pub struct Opt {
 
 impl fmt::Display for Opt {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "({}, {})", self.verbose, self.debug)
+        write!(f, "self fmt: (verbose:{}, debug: {}, level:{:?}, ip:{}, port:{})", self.verbose, self.debug, self.level, self.ip, self.port)
     }
 }
 
