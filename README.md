@@ -1,5 +1,7 @@
 # substrate-lesson
 
-# lesson3 echoServer
+## substrate-homework
 
-# lesson4 clitools
+- lesson3 echoServer
+- lesson4 clitools
+- lesson5 substrate-node-erc20

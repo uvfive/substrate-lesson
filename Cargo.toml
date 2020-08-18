@@ -1,7 +1,13 @@
+[profile.release]
+panic = 'unwind'
 
 [workspace]
 members = [
     'echoServer',
     'tcpServer',
-    'clitools'
+    'clitools',
+    'substrate-node/node',
+    'substrate-node/runtime',
+    'substrate-node/pallets/template',
+    'substrate-node/pallets/erc20'
 ]
