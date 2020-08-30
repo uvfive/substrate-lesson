@@ -9,5 +9,6 @@ members = [
     'substrate-node/node',
     'substrate-node/runtime',
     'substrate-node/pallets/template',
-    'substrate-node/pallets/erc20'
+    'substrate-node/pallets/erc20',
+    'substrate-node/pallets/evidence'
 ]
