@@ -3,8 +3,7 @@
 /// Edit this file to define custom logic or remove it if it is not needed.
 /// Learn more about FRAME and the core library of Substrate FRAME pallets:
 /// https://substrate.dev/docs/en/knowledgebase/runtime/frame
-
-use frame_support::{decl_module, decl_storage, decl_event, decl_error, dispatch, ensure};
+use frame_support::{decl_error, decl_event, decl_module, decl_storage, dispatch, ensure};
 use frame_system::ensure_signed;
 use sp_std::prelude::*;
 
@@ -15,46 +14,49 @@ pub trait Trait: frame_system::Trait {
 }
 
 decl_storage! {
-	trait Store for Module<T: Trait> as EvidenceModule {
+    trait Store for Module<T: Trait> as EvidenceModule {
         Proofs: map hasher(blake2_128_concat) Vec<u8> => (T::AccountId, T::BlockNumber);
-	}
+    }
 }
 
 // Pallets use events to inform users when important changes are made.
 // https://substrate.dev/docs/en/knowledgebase/runtime/events
 decl_event!(
-	pub enum Event<T> where AccountId = <T as frame_system::Trait>::AccountId {
+    pub enum Event<T>
+    where
+        AccountId = <T as frame_system::Trait>::AccountId,
+    {
         /// Event emitted when a proof has been claimed. [who, claim]
         ClaimCreated(AccountId, Vec<u8>),
         /// Event emitted when a claim is revoked by the owner. [who, claim]
         ClaimRevoked(AccountId, Vec<u8>),
 
         ClaimTransfered(AccountId, Vec<u8>),
-	}
+    }
 );
 
 // Errors inform users that something went wrong.
 decl_error! {
-	pub enum Error for Module<T: Trait> {
+    pub enum Error for Module<T: Trait> {
         /// The proof has already been claimed.
         ProofAlreadyClaimed,
         /// The proof does not exist, so it cannot be revoked.
         NoSuchProof,
         /// The proof is claimed by another account, so caller can't revoke it.
         NotProofOwner,
-	}
+    }
 }
 
 // Dispatchable functions allows users to interact with the pallet and invoke state changes.
 // These functions materialize as "extrinsics", which are often compared to transactions.
 // Dispatchable functions must be annotated with a weight and must return a DispatchResult.
 decl_module! {
-	pub struct Module<T: Trait> for enum Call where origin: T::Origin {
-		// Errors must be initialized if they are used by the pallet.
-		type Error = Error<T>;
+    pub struct Module<T: Trait> for enum Call where origin: T::Origin {
+        // Errors must be initialized if they are used by the pallet.
+        type Error = Error<T>;
 
-		// Events must be initialized if they are used by the pallet.
-		fn deposit_event() = default;
+        // Events must be initialized if they are used by the pallet.
+        fn deposit_event() = default;
 
         /// Allow a user to claim ownership of an unclaimed proof.
         #[weight = 0]
@@ -88,13 +90,13 @@ decl_module! {
             ensure!(Proofs::<T>::contains_key(&proof), Error::<T>::NoSuchProof);
 
             // Get owner of the claim.
-            let (owner, _) = Proofs::<T>::get(&proof);
+            let (owner, block_number) = Proofs::<T>::get(&proof);
 
             // Verify that sender of the current call is the claim owner.
             ensure!(sender == owner, Error::<T>::NotProofOwner);
 
             // Store the proof with the sender and block number.
-            Proofs::<T>::mutate(&proof, |(sender, _block)| *sender = receive.clone());
+            Proofs::<T>::mutate(&proof, |ev| *ev = (receive.clone(), block_number));
 
             // Emit an event that the claim was erased.
             Self::deposit_event(RawEvent::ClaimTransfered(receive.clone(), proof));
@@ -124,5 +126,5 @@ decl_module! {
 
             Ok(())
         }
-	}
+    }
 }
